@@ -19,7 +19,7 @@ class Tarefa:
         self.duracao = duracao
         self.descricao = descricao
     def getTarefa(self):
-      print(f"\n Data: {self.data} | Hora: {self.hora} | Duração: {self.duracao} | Descrição: {self.descricao}")
+      print(f"\n  Data: {self.data} | Hora: {self.hora} | Duração: {self.duracao} | Descrição: {self.descricao}")
     def setTarefa(self, duracao, descricao):
       print( duracao,descricao)
       self.duracao = duracao if not duracao == '' else self.duracao 
@@ -67,8 +67,6 @@ def menu(
 
     if int(ops) in range(1,len(ops_menu)+1): 
       globals()[ops_menu[int(ops)-1]['func']]()
-      print(ops_menu[int(ops)-1]['func'])
-      # exec(ops_menu[int(ops)-1]['func'])
       if sair:
         break
     else:
@@ -76,33 +74,13 @@ def menu(
       print(f'"{ops}" não é uma opcão:')
       cabesalho()
 
-    # if ops == '6':
-    #   clear()
-    #   cabesalho()
-    #   print('Obrigado e volte sempre!!')
-    #   cabesalho()
-    #   break
-    # elif ops == '1':
-    #   inserirTarefa()
-    # elif ops == '2':
-    #   removerTarefa()
-    # elif ops == '3':
-    #   listarTarefa()
-    # elif ops == '4':
-    #   consultarTarefa()
-    # elif ops == '5':
-    #   alterarTarefa()
-    # else:
-      #   cabesalho()
-      #   print(f'"{ops}" não é uma opcão:')
-      #   cabesalho()
-
 def cabesalho():
   for i in range(30) :
     print('*', end='')
   print()
 
 def inserirTarefa():
+    global lista_tarefas
     print('CADASTRANDO TAREFA:')
     t = Tarefa(
         data = input("\nData: "),
@@ -110,9 +88,14 @@ def inserirTarefa():
         duracao = input("\nDuração: "),
         descricao = input("\nDescrição: ")
     )
-    lista_tarefas.append(t)
-    t.getTarefa()
-    print('cadastrado com sucesso')
+    vago = get_by_data_hora(t.data,t.hora)
+    if len(vago) == 0:
+      lista_tarefas.append(t)  
+      t.getTarefa()
+      print('cadastrado com sucesso')
+    else:
+      print('ja há compromisso nessa data e horario:')
+      listarTarefa(vago)
     time.sleep(1)
   
 def removerTarefa():
@@ -123,15 +106,14 @@ def removerTarefa():
     print('Compromisso não encontrado')
 
 def listarTarefa(lista = 'all'):
-    print('TAREFAS:')
     lista = lista_tarefas if lista == 'all' else lista
-    cabesalho()
     for i in range(len(lista)):
         Tarefa.getTarefa(lista_tarefas[i])
     cabesalho()
     time.sleep(3)
 
 def consultarTarefa():
+  global encontrado
   tarefa = menu( ops_menu = [
     {
       "nome":"Consultar por data",
@@ -162,14 +144,12 @@ def alterarTarefa():
       print('tarefa a ser alterada é:')
       listarTarefa(tarefa)
       duracao = input('Caso queira muadar a duração informe a nova duracao:')
-      descricao =  input('Caso queira muadar a descrição informe a nova descrição:')
+      descricao = input('Caso queira muadar a descrição informe a nova descrição:')
       Tarefa.setTarefa(tarefa[0], duracao,descricao)
+      Tarefa.getTarefa(tarefa[0])
   else:
     print('Compromisso não encontrado')
     encontrado = True
-
-def alterar(terafa,campo):
-  print("opaaaaa",tarefa,campo)
 
 def finalizar():
   global sair
@@ -204,11 +184,13 @@ def get_by_data():
 
 
 
-def get_by_data_hora():
+def get_by_data_hora(filtro_data = '', filtro_hora = ''):
   global encontrado 
-  filtro_data = input('informe a data:')
-  filtro_hora = input('informe a hora:')
+  global lista_tarefas 
+  filtro_data = input('informe a data:') if filtro_data == '' else filtro_data
+  filtro_hora = input('informe a hora:') if filtro_hora == '' else filtro_hora
   filtrados = []
+  listarTarefa(lista_tarefas)
   for i in range(len(lista_tarefas)):
     if lista_tarefas[i].data == filtro_data and lista_tarefas[i].hora == filtro_hora:
         filtrados.append(lista_tarefas[i])
