@@ -139,13 +139,11 @@ def removerTarefa():
   if emptySchedule():
     return
   tarefa , encontrado= get_by_data_hora(listar = False)
-  print(tarefa)
   if encontrado:
-    if len(tarefa) == 1:
-      print('tarefa a apagada é:')
-      Tarefa.getTarefa(tarefa[0])
-      lista_tarefas.remove(tarefa[0])
-      print('tarefa a apagada com sucesso')
+    print('tarefa a apagada é:')
+    Tarefa.getTarefa(tarefa[0])
+    lista_tarefas.remove(tarefa[0])
+    print('tarefa a apagada com sucesso')
   else:
     print('Compromisso não encontrado')
   header()
@@ -188,17 +186,16 @@ def alterarTarefa():
     return
   tarefa , encontrado = get_by_data_hora(listar = False)
   if encontrado:
-    if len(tarefa) == 1:
-      print('tarefa a ser alterada é:')
-      listarTarefa(tarefa)
-      duracao = input('Caso queira muadar a duração informe a nova duracao:')
-      descricao = input('Caso queira muadar a descrição informe a nova descrição:')
-      Tarefa.setTarefa(tarefa[0], duracao,descricao)
-      Tarefa.getTarefa(tarefa[0])
+    print('tarefa a ser alterada é:')
+    listarTarefa(tarefa)
+    duracao = input('Caso queira muadar a duração informe a nova duracao:')
+    descricao = input('Caso queira muadar a descrição informe a nova descrição:')
+    Tarefa.setTarefa(tarefa[0], duracao,descricao)
+    Tarefa.getTarefa(tarefa[0])
   else:
     print('Compromisso não encontrado')
   header()
-  time.sleep(2)
+  time.sleep(1)
   clear()
 
 def finalizar():
@@ -224,10 +221,7 @@ def get_by_data(listar = True):
   for i in range(len(lista_tarefas)):
       if lista_tarefas[i].data == filtro_data:
           filtrados.append(lista_tarefas[i])
-  if len(filtrados) == 0:
-    encontrado = False
-  else:
-    encontrado = True
+  encontrado = not len(filtrados) == 0
   if listar:
     if encontrado:
       listarTarefa(filtrados)
@@ -236,7 +230,6 @@ def get_by_data(listar = True):
       print('Agenda Vazia')
   header()
   time.sleep(1)
-  clear()
 
 def get_by_data_hora(filtro_data = '', filtro_hora = '', listar = True ):
   filtro_data = input_date() if filtro_data == '' else filtro_data # caso eu não passe parametro de filtro_data ele iara perguntar ao usuario
@@ -245,10 +238,7 @@ def get_by_data_hora(filtro_data = '', filtro_hora = '', listar = True ):
   for i in range(len(lista_tarefas)):
     if lista_tarefas[i].data == filtro_data and lista_tarefas[i].hora == filtro_hora:
         filtrados.append(lista_tarefas[i])
-  if len(filtrados) == 0:
-    encontrado = False
-  else:
-    encontrado = True
+  encontrado = not len(filtrados) == 0
   if listar:
     if encontrado:
       listarTarefa(filtrados)
