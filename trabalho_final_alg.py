@@ -12,11 +12,11 @@ sair = False
 def input_date():
   while True:
     date = input('informe a data(formato DD/MM/AAAA):')
-    try:
+    try: 
       date = datetime.strptime(date, '%d/%m/%Y')
-    except ValueError as msg:
+    except ValueError as msg: # o que deve fazer caso caia nessa except, no caso se dar ValueError 
       print(msg)
-    else:
+    else: # se ele não cair nos except's retorna o else
       return date.strftime('%d/%m/%Y')
 
 def input_hour():
@@ -46,9 +46,9 @@ class Tarefa:
 
     def setTarefa(self, duracao, descricao):
       print( duracao,descricao)
-      self.duracao = duracao if not duracao == '' else self.duracao 
+      self.duracao = duracao if not duracao == '' else self.duracao
       self.descricao = descricao if not descricao == '' else self.descricao 
-
+      #so ira ser alterado caso tenha um valor novo recebido 
 
 
 def menu(
@@ -70,8 +70,12 @@ def menu(
           "func" :"consultarTarefa"
         },
         {
-          "nome" :  "Alterar Tarefa" ,   
+          "nome" : "Alterar Tarefa" ,   
           "func" : "alterarTarefa"
+        },
+        {
+          "nome" : "Orednar lista" ,   
+          "func" : "ordeByDate"
         },
         {
           "nome" : "sair" ,   
@@ -88,7 +92,7 @@ def menu(
     ops = input('\n ESCOLHA UMA OPÇÃO:')
 
     if int(ops) in range(1,len(ops_menu)+1): 
-      globals()[ops_menu[int(ops)-1]['func']]()
+      globals()[ops_menu[int(ops)-1]['func']]() #função globals()[] passando o um array com a função ele executara a mesma caso encontre, no caso acessando a chave func do dicionario ops_menu chamara a função em questão 
       if sair:
         break
     else:
@@ -113,7 +117,7 @@ def inserirTarefa():
         descricao = input("Descrição: ")
     )
 
-    vago, bvago = get_by_data_hora(t.data,t.hora, listar = False)
+    vago, bvago = get_by_data_hora(t.data,t.hora, listar = False) # valida se não ha um tarefa nessa tada e horario 
 
     if not bvago:
       lista_tarefas.append(t)  
@@ -237,8 +241,8 @@ def get_by_data(listar = True):
   clear()
 
 def get_by_data_hora(filtro_data = '', filtro_hora = '', listar = True ):
-  filtro_data = input_date() if filtro_data == '' else filtro_data
-  filtro_hora = input_hour() if filtro_hora == '' else filtro_hora
+  filtro_data = input_date() if filtro_data == '' else filtro_data # caso eu não passe parametro de filtro_data ele iara perguntar ao usuario
+  filtro_hora = input_hour() if filtro_hora == '' else filtro_hora # caso eu não passe parametro de filtro_hora ele iara perguntar ao usuario
   filtrados = []
   for i in range(len(lista_tarefas)):
     if lista_tarefas[i].data == filtro_data and lista_tarefas[i].hora == filtro_hora:
@@ -258,11 +262,19 @@ def get_by_data_hora(filtro_data = '', filtro_hora = '', listar = True ):
       clear()
 
   return filtrados , encontrado
+
+def ordeByDate():
+  #ordenação da lista
+  global lista_tarefas
+  for i in range(len(lista_tarefas)):
+    for j in range(len(lista_tarefas)):
+      if lista_tarefas[j].data > lista_tarefas[i].data:
+        lista_tarefas[j], lista_tarefas[i] = lista_tarefas[i],lista_tarefas[j]
+      elif lista_tarefas[j].data == lista_tarefas[i].data:
+        if lista_tarefas[j].hora > lista_tarefas[i].hora:
+          lista_tarefas[j], lista_tarefas[i] = lista_tarefas[i],lista_tarefas[j]
   
 def clear():
-    ''
-    print("\n" * 130)
-    print("\x1b[2J")
     os.system('cls' if os.name == 'nt' else 'clear')
 
 # menu()
