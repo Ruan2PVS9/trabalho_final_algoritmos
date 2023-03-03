@@ -4,10 +4,8 @@ import os
 import time
 from datetime import datetime, date
 
-
 lista_tarefas = [] 
 sair = False
-# encontrado = True
 
 def input_date():
   while True:
@@ -28,6 +26,12 @@ def input_hour():
       print(msg)
     else:
       return hour.strftime('%H:%M')
+
+def emptySchedule():
+  if len(lista_tarefas) == 0: 
+    print('não ha nenhuma tarefa')
+    return True
+  return False
 
 class Tarefa:
     data = None
@@ -116,9 +120,7 @@ def inserirTarefa():
         duracao = input("Duração: "),
         descricao = input("Descrição: ")
     )
-
     vago, bvago = get_by_data_hora(t.data,t.hora, listar = False) # valida se não ha um tarefa nessa tada e horario 
-
     if not bvago:
       lista_tarefas.append(t)  
       t.getTarefa()
@@ -134,72 +136,67 @@ def inserirTarefa():
 def removerTarefa():
   global lista_tarefas
   header()
-  if len(lista_tarefas) == 0: 
-    print('não ha nenhuma tarefa')
+  if emptySchedule():
+    return
+  tarefa , encontrado= get_by_data_hora(listar = False)
+  print(tarefa)
+  if encontrado:
+    if len(tarefa) == 1:
+      print('tarefa a apagada é:')
+      Tarefa.getTarefa(tarefa[0])
+      lista_tarefas.remove(tarefa[0])
+      print('tarefa a apagada com sucesso')
   else:
-    tarefa , encontrado= get_by_data_hora(listar = False)
-    print(tarefa)
-    if encontrado:
-      if len(tarefa) == 1:
-        print('tarefa a apagada é:')
-        Tarefa.getTarefa(tarefa[0])
-        lista_tarefas.remove(tarefa[0])
-        print('tarefa a apagada com sucesso')
-    else:
-      print('Compromisso não encontrado')
+    print('Compromisso não encontrado')
   header()
   time.sleep(1)
   clear()
 
 def listarTarefa(lista = 'all'):
+  if emptySchedule():
+    return
   global lista_tarefas
   header()
   lista = lista_tarefas if lista == 'all' else lista
-  if len(lista) == 0: 
-    print('não ha nenhuma tarefa')
-  else:
-    for i in range(len(lista)):
-      Tarefa.getTarefa(lista_tarefas[i])
+  for i in range(len(lista)):
+    Tarefa.getTarefa(lista_tarefas[i])
   header()
   time.sleep(2)
 
 def consultarTarefa():
-  if len(lista_tarefas) == 0: 
-    print('não ha nenhuma tarefa')
-  else:
-    menu( ops_menu = [
-      {
-        "nome":"Consultar por data",
-        "func":"get_by_data"
-      },
-      {
-        "nome":"Consultar por data e hora",
-        "func":"get_by_data_hora"
-      },
-      {
-        "nome":"Voltar",
-        "func":"voltar"
-      }
-      ]
-    )
+  if emptySchedule():
+    return
+  menu( ops_menu = [
+    {
+      "nome":"Consultar por data",
+      "func":"get_by_data"
+    },
+    {
+      "nome":"Consultar por data e hora",
+      "func":"get_by_data_hora"
+    },
+    {
+      "nome":"Voltar",
+      "func":"voltar"
+    }
+    ]
+  )
   voltar()
 
-
 def alterarTarefa():
-  if len(lista_tarefas) == 0: 
-    print('não ha nenhuma tarefa')
+  if emptySchedule():
+    return
+  tarefa , encontrado = get_by_data_hora(listar = False)
+  if encontrado:
+    if len(tarefa) == 1:
+      print('tarefa a ser alterada é:')
+      listarTarefa(tarefa)
+      duracao = input('Caso queira muadar a duração informe a nova duracao:')
+      descricao = input('Caso queira muadar a descrição informe a nova descrição:')
+      Tarefa.setTarefa(tarefa[0], duracao,descricao)
+      Tarefa.getTarefa(tarefa[0])
   else:
-    tarefa , encontrado= get_by_data_hora(listar = False)
-    if encontrado:
-      if len(tarefa) == 1:
-        print('tarefa a ser alterada é:')
-        listarTarefa(tarefa)
-        duracao = input('Caso queira muadar a duração informe a nova duracao:')
-        descricao = input('Caso queira muadar a descrição informe a nova descrição:')
-        Tarefa.setTarefa(tarefa[0], duracao,descricao)
-        Tarefa.getTarefa(tarefa[0])
-    else:
-      print('Compromisso não encontrado')
+    print('Compromisso não encontrado')
   header()
   time.sleep(2)
   clear()
@@ -216,11 +213,12 @@ def voltar():
   global sair
   sair = not sair
   clear()
-  header()
   print('voltando')
   header()
   
 def get_by_data(listar = True):
+  if emptySchedule():
+    return 
   filtro_data = input_date()
   filtrados = []
   for i in range(len(lista_tarefas)):
@@ -260,7 +258,6 @@ def get_by_data_hora(filtro_data = '', filtro_hora = '', listar = True ):
       header()
       time.sleep(1)
       clear()
-
   return filtrados , encontrado
 
 def ordeByDate():
@@ -277,9 +274,5 @@ def ordeByDate():
 def clear():
     os.system('cls' if os.name == 'nt' else 'clear')
 
-# menu()
-def agenda():
-  print("bem vindo")
-  menu()
+menu()
 
-agenda()
