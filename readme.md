@@ -1,6 +1,6 @@
 # Trabalho Final Algoritmos e Programação
 
-## alunos: Ruan, Mauricio
+## alunos: Ruan
 
 O trabalho final do CCR Algoritmos e Programação é uma agenda de compromissos. A agenda deverá conter a data e hora do compromisso, descrição e duração (em horas) do mesmo.
 Exemplo:

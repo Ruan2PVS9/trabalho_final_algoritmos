@@ -1,4 +1,4 @@
-# RUAN E MAURICIO
+# RUAN
 ### agenda de compromissos ###
 import os
 import time
